@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"sync"
@@ -68,6 +69,8 @@ func producer(wg *sync.WaitGroup) <-chan int {
 				continue
 			}
 			c <- i
+			log.Println("Введено число: ", i)
+
 		}
 	}()
 	return c
@@ -77,6 +80,8 @@ func filterNegative(source <-chan int, filtered chan<- int) {
 	for i := range source {
 		if i >= 0 {
 			filtered <- i
+		} else {
+			log.Println("Отфильтровано отрицательное число: ", i)
 		}
 	}
 }
@@ -85,6 +90,8 @@ func filteredNonThree(source <-chan int, filtered chan<- int) {
 	for i := range source {
 		if (i != 0) && (i%3 != 0) {
 			filtered <- i
+		} else {
+			log.Println("Отфильтровано число, делящееся на 3: ", i)
 		}
 	}
 }
@@ -100,6 +107,7 @@ func consumer(r *RingIntBuffer, t *time.Ticker) {
 		b := r.Get()
 		if len(b) > 0 {
 			fmt.Println("Получены данные:", b)
+			log.Println("Получены данные: ", b)
 		}
 	}
 }
